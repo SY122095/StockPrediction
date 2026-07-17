@@ -1,0 +1,102 @@
+# =========================================================
+# グラフ設定
+# =========================================================
+visualization:
+
+  # デフォルトのテーマ: notebook / presentation / paper
+  theme: 'presentation'
+
+  matplotlib:
+
+    style: 'default'
+
+    figure:
+      figsize: [12, 6]
+      dpi: 150
+      facecolor: 'white'
+
+    font:
+      # OS別フォント（japanize_matplotlibを使わない場合に使用）
+      family:
+        windows: 'Meiryo'
+        mac: 'Hiragino Sans'
+        linux: 'Noto Sans CJK JP'
+      base_size: 15
+
+    title:
+      fontsize: 22
+      weight: 'bold'
+
+    axes:
+      labelsize: 16
+      titlesize: 18
+      grid: true
+      unicode_minus: false
+
+    ticks:
+      x_labelsize: 14
+      y_labelsize: 14
+
+    legend:
+      fontsize: 14
+      frameon: false
+
+    lines:
+      linewidth: 2
+      markersize: 8
+
+    grid:
+      alpha: 0.3
+      linestyle: '--'
+
+    scatter:
+      alpha: 0.7
+
+    hist:
+      bins: 30
+
+    savefig:
+      bbox_inches: 'tight'
+      transparent: false
+
+    layout:
+      tight_layout: true
+
+  seaborn:
+    theme: 'whitegrid'
+    palette: 'deep'
+
+  plotly:
+    template: 'plotly_white'
+
+# =========================================================
+# テーマ別フォントサイズ
+# =========================================================
+theme:
+
+  notebook:
+    title_size: 18
+    axis_size: 14
+    tick_size: 10
+
+  presentation:
+    title_size: 28
+    axis_size: 20
+    tick_size: 16
+
+  paper:
+    title_size: 14
+    axis_size: 12
+    tick_size: 10
+
+# =========================================================
+# カラーパレット
+# =========================================================
+palette:
+  # 定性的（カテゴリ変数）
+  categorical: ['#4C72B0', '#DD8452', '#55A868', '#C44E52', '#8172B2',
+                '#937860', '#DA8BC3', '#8C8C8C', '#CCB974', '#64B5CD']
+  # 定量的（連続値）
+  sequential: 'Blues'
+  # ダイバージング
+  diverging: 'RdBu_r'

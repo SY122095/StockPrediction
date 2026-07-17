@@ -1,0 +1,6 @@
+# React (Vite) フロントエンドのため Python requirements は不要です。
+# Node.js パッケージは package.json を参照してください。
+#
+# npm install  →  依存パッケージインストール
+# npm run dev  →  開発サーバー起動 (http://localhost:3000)
+# npm run build → 本番ビルド (dist/)

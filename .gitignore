@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+start.ps1
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Data (生データは Git 管理外)
+Analytics/data/
+Analytics/processed_data/
+Analytics/results/figures/
+Analytics/results/tables/*.pkl
+Analytics/results/tables/*.csv
+Analytics/memo/
+
+# Application DB & モデル
+Application/backend/stock_prediction.db
+Application/backend/saved_models/
+Application/backend/.env
+
+# JPX統計 手動配置ファイル (README.md は追跡対象)
+Application/backend/data/jpx_manual/*.xlsx
+Application/backend/data/jpx_manual/*.xls
+Application/backend/data/jpx_manual/*.csv
+
+# Node.js
+Application/frontend/node_modules/
+Application/frontend/dist/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 設計書
+docs/

@@ -1,0 +1,51 @@
+# =========================================================
+# データ分析プロジェクト 共通ライブラリ
+# =========================================================
+# インストール: pip install -r requirements.txt
+
+# ----- データ操作 -----
+pandas==2.2.2
+numpy==1.26.4
+openpyxl==3.1.2          # Excel読み書き
+pyarrow==16.1.0           # Parquet読み書き
+
+# ----- 外部データソース (株価・マクロ・センチメント・需給) -----
+yfinance==0.2.40
+requests==2.32.3
+fredapi==0.5.2
+beautifulsoup4==4.12.3
+lxml==5.2.2
+python-dotenv==1.0.1
+
+# ----- 機械学習 -----
+scikit-learn==1.5.0
+lightgbm==4.4.0
+xgboost==2.0.3
+catboost==1.2.5
+
+# ----- 統計・時系列 -----
+scipy==1.13.1
+statsmodels==0.14.2
+prophet==1.1.5            # 時系列予測（Facebookのモデル）
+
+# ----- 可視化 -----
+matplotlib==3.9.0
+seaborn==0.13.2
+plotly==5.22.0
+japanize-matplotlib==1.1.3
+
+# ----- 設定・ユーティリティ -----
+pyyaml==6.0.1
+tqdm==4.66.4
+
+# ----- Jupyter -----
+jupyterlab==4.2.2
+ipywidgets==8.1.3
+
+# ----- オプション（必要に応じて有効化） -----
+# azure-ai-formrecognizer       # Azure Document Intelligence
+# azure-ai-openai               # Azure OpenAI
+# google-cloud-vision           # GCP Vision API
+# shap                          # SHAP値（モデル解釈）
+# optuna                        # ハイパーパラメータ最適化
+# mlflow                        # 実験管理

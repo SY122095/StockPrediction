@@ -1,0 +1,139 @@
+# =========================================================
+# 株価予測システム 設定ファイル
+# =========================================================
+project:
+  name: '株価予測システム'
+  id: 'STOCK-PRED-001'
+  description: 'LightGBMによる株式・暗号資産リターン予測'
+  analyst: ''
+
+paths:
+  base: '..'
+  data: '../data'
+  processed_data: '../processed_data'
+  results: '../results'
+  figures: '../results/figures'
+  tables: '../results/tables'
+
+# ---- 分析期間 ----
+period:
+  start: '202001'
+  end: '202612'
+  train_end: '202412'   # この日付未満を学習データに使用
+  test_start: '202501'  # この日付以降をテストデータに使用
+
+# ---- 対象銘柄 ----
+equity:
+  symbols:
+    - '7203.T'  # トヨタ自動車
+    - '6758.T'  # ソニーグループ
+    - '8306.T'  # 三菱UFJ FG
+    - '9432.T'  # NTT
+    - '9984.T'  # ソフトバンクG
+    - '6861.T'  # キーエンス
+    - '8316.T'  # 三井住友FG
+    - '4063.T'  # 信越化学工業
+    - '6367.T'  # ダイキン工業
+    - '7974.T'  # 任天堂
+    - '8035.T'  # 東京エレクトロン
+    - '6954.T'  # ファナック
+    - '4519.T'  # 中外製薬
+    - '9433.T'  # KDDI
+    - '3382.T'  # セブン&アイ
+    - '4502.T'  # 武田薬品工業
+    - '7751.T'  # キヤノン
+    - '6098.T'  # リクルートHD
+    - '8766.T'  # 東京海上HD
+    - '6501.T'  # 日立製作所
+    - '4568.T'  # 第一三共
+    - '7267.T'  # 本田技研工業
+    - '6702.T'  # 富士通
+    - '6503.T'  # 三菱電機
+    - '5108.T'  # ブリヂストン
+  target: 'fwd_ret_5d'
+  data_start: '2020-01-01'
+
+crypto:
+  symbols:
+    - 'BTC-USD'
+    - 'ETH-USD'
+    - 'SOL-USD'
+    - 'BNB-USD'
+    - 'XRP-USD'
+  target: 'fwd_ret_7d'
+  data_start: '2020-01-01'
+
+macro_tickers:
+  '^N225':    'nikkei225'
+  '^DJI':     'dow_jones'
+  'DX-Y.NYB': 'usd_index'
+  'CL=F':     'crude_oil'
+  'GC=F':     'gold'
+  '^TNX':     'us10y_yield'
+  'USDJPY=X': 'usdjpy'
+  '^VIX':     'vix'
+
+# ---- FRED (マクロ経済, 要 FRED_API_KEY) ----
+# 取得方法: docs/api_setup_guide.md「6. FRED API」参照
+fred_series:
+  'FEDFUNDS': 'fed_funds_rate'
+  'DGS10':    'us10y_yield'
+  'DGS2':     'us2y_yield'
+  'T10Y2Y':   'us_yield_spread'
+  'CPIAUCSL': 'us_cpi'
+  'UNRATE':   'us_unemployment'
+  'DEXJPUS':  'usdjpy_fred'
+
+# ---- センチメント ----
+sentiment:
+  fear_greed_limit: 0   # 0 = 全履歴 (alternative.me, 暗号資産向け, 認証不要)
+  vix_zscore_window: 60
+
+# ---- J-Quants (決算イベント/PEAD, 要 JQUANTS_API_KEY) ----
+# 銘柄コードは5桁 (4桁+末尾0) が必要な場合がある点に注意 (docs/api_setup_guide.md 1章)
+jquants:
+  note: '無料プランは約12週間遅延。エンドポイントパスは要検証 (V2クイックスタート参照)'
+
+# ---- JPX需給統計 (投資部門別売買状況/信用残高/空売り比率) ----
+supply_demand:
+  investor_flows_url: 'https://www.jpx.co.jp/markets/statistics-equities/investor-type/index.html'
+  margin_balance_url: 'https://www.jpx.co.jp/markets/statistics-equities/margin/index.html'
+  short_selling_url:  'https://www.jpx.co.jp/markets/statistics-equities/short-selling/index.html'
+  manual_fallback_dir: '../data/jpx_manual'  # ライブ取得失敗時の手動配置先
+
+# ---- 特徴量設定 ----
+features:
+  sma_windows:  [5, 10, 20, 60]
+  rsi_windows:  [14, 28]
+  vol_windows:  [5, 20]
+  ret_windows:  [1, 5, 20]
+  bb_window:    20
+  macd_params:  {fast: 12, slow: 26, signal: 9}
+
+# ---- モデル設定 ----
+model:
+  n_splits: 5
+  early_stopping_rounds: 50
+  params:
+    objective:        regression
+    n_estimators:     300
+    max_depth:        5
+    num_leaves:       20
+    learning_rate:    0.05
+    colsample_bytree: 0.7
+    subsample:        0.8
+    reg_alpha:        0.1
+    reg_lambda:       0.1
+    min_child_samples: 20
+    random_state:     42
+    n_jobs:           -1
+    verbose:          -1
+
+random_seed: 42
+
+# ---- フォント ----
+font:
+  title_size: 20
+  label_size: 14
+  axis_size:  12
+  legend_size: 10
