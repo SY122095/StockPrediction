@@ -3,6 +3,7 @@ import Layout from './components/Layout'
 import DashboardPage from './pages/DashboardPage'
 import ChartPage from './pages/ChartPage'
 import MarketOverviewPage from './pages/MarketOverviewPage'
+import ScreeningPage from './pages/ScreeningPage'
 import AdminPage from './pages/AdminPage'
 
 export default function App() {
@@ -13,6 +14,7 @@ export default function App() {
         <Route path="dashboard" element={<DashboardPage />} />
         <Route path="chart" element={<ChartPage />} />
         <Route path="market" element={<MarketOverviewPage />} />
+        <Route path="screening" element={<ScreeningPage />} />
         <Route path="admin" element={<AdminPage />} />
       </Route>
     </Routes>

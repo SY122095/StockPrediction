@@ -3,12 +3,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
 from core.config import settings
-from core.database import Base, engine, get_db
+from core.database import Base, engine, ensure_schema_upgrades, get_db
 from models.schemas import AdminStatusOut
-from routers import events, macro, predictions, sentiment, stocks, supply_demand
+from routers import events, macro, predictions, screening, sentiment, stocks, supply_demand
 
 # テーブル作成
 Base.metadata.create_all(bind=engine)
+ensure_schema_upgrades()
 
 app = FastAPI(
     title=settings.app_name,
@@ -30,6 +31,7 @@ app.include_router(macro.router)
 app.include_router(sentiment.router)
 app.include_router(events.router)
 app.include_router(supply_demand.router)
+app.include_router(screening.router)
 
 
 # ---- ルート ----
@@ -122,4 +124,31 @@ def admin_refresh_events(
 def admin_refresh_supply_demand(db: Session = Depends(get_db)):
     from services.supply_demand_service import refresh_supply_demand
     result = refresh_supply_demand(db)
+    return {"status": "ok", **result}
+
+
+@app.post("/api/v1/admin/refresh-universe", tags=["admin"])
+def admin_refresh_universe(db: Session = Depends(get_db)):
+    """東証上場銘柄マスタ(J-Quants)を取得し Instrument テーブルへ反映する。"""
+    from services.universe_service import refresh_universe
+    result = refresh_universe(db)
+    return {"status": "ok", **result}
+
+
+@app.post("/api/v1/admin/refresh-equity-broad", tags=["admin"])
+def admin_refresh_equity_broad(
+    start: str = Query("2024-05-01", description="データ取得開始日 YYYY-MM-DD (J-Quants一括取得)"),
+    db: Session = Depends(get_db),
+):
+    """広いユニバース(J-Quants全銘柄)のOHLCVを日付範囲一括取得する。"""
+    from services.data_service import refresh_equity_broad
+    result = refresh_equity_broad(db, start=start)
+    return {"status": "ok", **result}
+
+
+@app.post("/api/v1/admin/run-screening", tags=["admin"])
+def admin_run_screening(db: Session = Depends(get_db)):
+    """広いユニバースのOHLCVから流動性フィルタ+急騰スコアを計算し保存する。"""
+    from services.screening_service import run_screening
+    result = run_screening(db)
     return {"status": "ok", **result}

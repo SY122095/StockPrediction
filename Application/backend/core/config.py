@@ -13,10 +13,18 @@ class Settings(BaseSettings):
 
     fred_api_key: str = ""
     jquants_api_key: str = ""
+    # Phase2以降で使用予定 (現時点ではどのアダプタからも未参照だが、.envに設定済みのため
+    # 起動時エラーを避けるためフィールドとして宣言しておく)
+    edinet_api_key: str = ""
+    estat_api_key: str = ""
+    vantage_api_key: str = ""
+    bea_api_key: str = ""
+    bls_api_key: str = ""
 
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
+        extra = "ignore"   # 未宣言の環境変数が.envに追加されても起動時エラーにしない
 
     def is_configured(self, key: str) -> bool:
         """APIキーが未設定/ダミー値でないかを判定する"""

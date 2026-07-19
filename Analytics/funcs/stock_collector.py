@@ -18,6 +18,9 @@ import yfinance as yf
 warnings.filterwarnings("ignore")
 
 # ---- 銘柄定義 ----
+# NIKKEI_MAJOR は「コア層」専用の厳選銘柄リスト (LightGBM学習/予測パイプライン向け)。
+# 手動での追記管理を避けたい広いユニバース (急騰候補スクリーニング等) は
+# funcs/universe_collector.py の fetch_listed_instruments() で東証全上場銘柄を動的取得すること。
 
 NIKKEI_MAJOR = [
     "7203.T",  # トヨタ自動車

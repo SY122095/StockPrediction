@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react'
 import {
   Box, Typography, Card, CardContent, Grid, FormControl,
   InputLabel, Select, MenuItem, CircularProgress, Alert, Divider,
-  Stack,
+  Stack, Autocomplete, TextField,
 } from '@mui/material'
 import {
   ComposedChart, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -118,20 +118,16 @@ export default function ChartPage() {
             </Select>
           </FormControl>
 
-          <FormControl size="small" sx={{ minWidth: 220 }}>
-            <InputLabel>銘柄</InputLabel>
-            <Select
-              value={effectiveSymbol || ''}
-              label="銘柄"
-              onChange={(e) => setSymbol(e.target.value)}
-            >
-              {instruments.map((i) => (
-                <MenuItem key={i.symbol} value={i.symbol}>
-                  {i.symbol}　{i.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          <Autocomplete
+            size="small"
+            sx={{ minWidth: 260 }}
+            options={instruments}
+            getOptionLabel={(i) => `${i.symbol} ${i.name || ''}`}
+            isOptionEqualToValue={(a, b) => a.symbol === b.symbol}
+            value={instruments.find((i) => i.symbol === effectiveSymbol) || null}
+            onChange={(_, newValue) => setSymbol(newValue?.symbol || '')}
+            renderInput={(params) => <TextField {...params} label="銘柄 (コード/銘柄名で検索)" />}
+          />
 
           <FormControl size="small" sx={{ minWidth: 120 }}>
             <InputLabel>期間</InputLabel>

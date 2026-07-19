@@ -89,10 +89,21 @@ sentiment:
   fear_greed_limit: 0   # 0 = 全履歴 (alternative.me, 暗号資産向け, 認証不要)
   vix_zscore_window: 60
 
-# ---- J-Quants (決算イベント/PEAD, 要 JQUANTS_API_KEY) ----
+# ---- J-Quants (決算イベント/PEAD, 上場銘柄マスタ, 要 JQUANTS_API_KEY) ----
 # 銘柄コードは5桁 (4桁+末尾0) が必要な場合がある点に注意 (docs/api_setup_guide.md 1章)
 jquants:
-  note: '無料プランは約12週間遅延。エンドポイントパスは要検証 (V2クイックスタート参照)'
+  note: '無料プランは約12週間遅延。/equities/master, /equities/bars/daily は実地検証済み(2026-07)'
+
+# ---- 広いユニバース (急騰候補スクリーニング用, コア層とは独立) ----
+# equity.symbols (コア層, ~30銘柄) とは別に、東証全上場銘柄からJ-Quants上場銘柄マスタを動的取得し、
+# 時価総額ではなく流動性(売買代金)のみで足切りする。小型株を意図的に排除しないための設計。
+universe:
+  source: jquants_listed_info
+  market_segments: ['Prime', 'Standard', 'Growth']   # TOKYO PRO MARKETは既定で除外
+  min_avg_turnover_jpy: 5000000    # 直近20営業日の平均売買代金の下限 (円)。要調整、低めが既定
+  min_trading_coverage: 0.9        # 直近20営業日中、値が付いた日の割合の下限
+  liquidity_window_days: 20
+  refresh_interval_days: 7         # 銘柄マスタの再取得間隔 (上場/廃止は頻繁でないため低頻度でよい)
 
 # ---- JPX需給統計 (投資部門別売買状況/信用残高/空売り比率) ----
 supply_demand:

@@ -12,6 +12,13 @@ class Instrument(Base):
     name       = Column(String(100))
     asset_class = Column(String(20))   # equity_jp | crypto
     exchange   = Column(String(20))
+    market_segment = Column(String(20))   # Prime | Standard | Growth (J-Quants MktNm)
+    sector33_code  = Column(String(10))    # J-Quants 33業種コード
+    sector33_name  = Column(String(50))
+    is_active      = Column(Integer, default=1)   # 上場中=1 (J-Quants master に存在しなくなったら0)
+    is_core        = Column(Integer, default=0)   # コア層(厳選銘柄, LightGBM学習対象)=1。
+    # 広いユニバース(急騰候補スクリーニング用)の銘柄は0のまま。refresh_universe による
+    # upsert はこの列を更新しない (upsert_instruments 側でのみ1を立てる)。
 
 
 class OHLCV(Base):
@@ -130,4 +137,22 @@ class SupplyDemand(Base):
     __table_args__ = (
         UniqueConstraint("market", "metric_name", "date_utc", name="uq_supply_demand_key"),
         Index("ix_supply_demand_metric_date", "metric_name", "date_utc"),
+    )
+
+
+class ScreeningScore(Base):
+    """急騰候補スクリーニング (広いユニバース対象, ルールベーススコア。LightGBM非依存)"""
+    __tablename__ = "screening_scores"
+
+    id          = Column(Integer, primary_key=True)
+    symbol      = Column(String(20), nullable=False)
+    date_utc    = Column(DateTime, nullable=False)
+    score_type  = Column(String(20), nullable=False)  # volume_spike | momentum | breakout | composite
+    value       = Column(Float)
+    rank        = Column(Integer)
+    created_at  = Column(DateTime, server_default=func.now())
+
+    __table_args__ = (
+        UniqueConstraint("symbol", "date_utc", "score_type", name="uq_screening_symbol_date_type"),
+        Index("ix_screening_date_type_rank", "date_utc", "score_type", "rank"),
     )

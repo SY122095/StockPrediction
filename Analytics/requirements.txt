@@ -15,6 +15,7 @@ requests==2.32.3
 fredapi==0.5.2
 beautifulsoup4==4.12.3
 lxml==5.2.2
+xlrd==2.0.1               # JPX統計の .xls (レガシー形式) 読み込みに必要
 python-dotenv==1.0.1
 
 # ----- 機械学習 -----

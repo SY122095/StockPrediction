@@ -114,3 +114,20 @@ class SupplyDemandOut(BaseModel):
 class AdminStatusOut(BaseModel):
     fred_configured: bool
     jquants_configured: bool
+
+
+class ScreeningScoreOut(BaseModel):
+    rank: Optional[int]
+    symbol: str
+    name: Optional[str]
+    market_segment: Optional[str]
+    value: Optional[float]
+
+    class Config:
+        from_attributes = True
+
+
+class ScreeningRankingOut(BaseModel):
+    as_of_date: Optional[datetime]
+    score_type: str
+    rankings: list[ScreeningScoreOut]

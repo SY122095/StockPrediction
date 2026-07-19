@@ -84,3 +84,20 @@ export const adminRefreshEvents = (assetClass = 'equity_jp') =>
 
 export const adminRefreshSupplyDemand = () =>
   api.post('/admin/refresh-supply-demand').then((r) => r.data)
+
+// ---- 急騰候補スクリーニング (広いユニバース、コア予測パイプラインとは独立) ----
+export const fetchScreeningRanking = ({ scoreType = 'composite', marketSegment, topN = 50 }) =>
+  api
+    .get('/screening/ranking', {
+      params: { score_type: scoreType, market_segment: marketSegment || undefined, top_n: topN },
+    })
+    .then((r) => r.data)
+
+export const adminRefreshUniverse = () =>
+  api.post('/admin/refresh-universe').then((r) => r.data)
+
+export const adminRefreshEquityBroad = (start = '2024-05-01') =>
+  api.post('/admin/refresh-equity-broad', null, { params: { start } }).then((r) => r.data)
+
+export const adminRunScreening = () =>
+  api.post('/admin/run-screening').then((r) => r.data)

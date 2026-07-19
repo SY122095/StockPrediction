@@ -37,5 +37,9 @@ Application/frontend/dist/
 .DS_Store
 Thumbs.db
 
+# dev.ps1 実行ログ
+backend_dev.log
+backend_dev.err.log
+
 # 設計書
 docs/

@@ -7,6 +7,7 @@ import {
 import DashboardIcon from '@mui/icons-material/Dashboard'
 import ShowChartIcon from '@mui/icons-material/ShowChart'
 import PublicIcon from '@mui/icons-material/Public'
+import WhatshotIcon from '@mui/icons-material/Whatshot'
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
 import { useQuery } from '@tanstack/react-query'
 import { fetchHealth } from '../api/client'
@@ -14,10 +15,11 @@ import { fetchHealth } from '../api/client'
 const DRAWER_WIDTH = 220
 
 const NAV_ITEMS = [
-  { path: '/dashboard', label: '予測ランキング',     icon: <DashboardIcon /> },
-  { path: '/chart',     label: '株価チャート',       icon: <ShowChartIcon /> },
-  { path: '/market',    label: 'マクロ・センチメント', icon: <PublicIcon /> },
-  { path: '/admin',     label: '管理',               icon: <AdminPanelSettingsIcon /> },
+  { path: '/dashboard',  label: '予測ランキング',       icon: <DashboardIcon /> },
+  { path: '/chart',      label: '株価チャート',         icon: <ShowChartIcon /> },
+  { path: '/market',     label: 'マクロ・センチメント', icon: <PublicIcon /> },
+  { path: '/screening',  label: '急騰候補スクリーニング', icon: <WhatshotIcon /> },
+  { path: '/admin',      label: '管理',                 icon: <AdminPanelSettingsIcon /> },
 ]
 
 export default function Layout() {

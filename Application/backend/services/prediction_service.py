@@ -60,11 +60,17 @@ FEATURE_COLS = [
 
 
 def _load_ohlcv(db: Session, asset_class: str, days: int = 500) -> pd.DataFrame:
+    """コア層(is_core=1)の銘柄のみを対象にする。広いユニバース(急騰候補スクリーニング用)は
+    is_core=0 のまま登録されるため、ここには含まれない (二層構成を維持するための境界)。"""
     cutoff = datetime.utcnow() - timedelta(days=days)
     rows = (
         db.query(OHLCV)
         .join(Instrument, OHLCV.symbol == Instrument.symbol)
-        .filter(Instrument.asset_class == asset_class, OHLCV.date_utc >= cutoff)
+        .filter(
+            Instrument.asset_class == asset_class,
+            Instrument.is_core == 1,
+            OHLCV.date_utc >= cutoff,
+        )
         .order_by(OHLCV.symbol, OHLCV.date_utc)
         .all()
     )

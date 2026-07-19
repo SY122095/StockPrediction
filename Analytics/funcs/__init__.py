@@ -8,6 +8,7 @@ from . import (
     sentiment_collector,
     stock_collector,
     supply_demand_collector,
+    universe_collector,
     visualization,
 )
 
@@ -19,6 +20,7 @@ __all__ = [
     "sentiment_collector",
     "event_collector",
     "supply_demand_collector",
+    "universe_collector",
     "feature_engineering",
     "model",
     "visualization",

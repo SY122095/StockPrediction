@@ -35,7 +35,12 @@ def get_upcoming_earnings(
     within_days: int = Query(14, ge=1, le=90),
     db: Session = Depends(get_db),
 ):
-    """今後 N 日以内に決算発表を控えている銘柄一覧 (推奨エンジンの除外フィルタ用途)。"""
+    """今後 N 日以内に決算発表を控えている銘柄一覧 (推奨エンジンの除外フィルタ用途)。
+
+    注意: EarningsEvent は J-Quants fins/summary (=過去の開示履歴) から構築されるため、
+    現状は将来の決算発表予定日を含まない。本エンドポイントは常に空を返す可能性が高い。
+    将来日程が必要な場合はTDnet適時開示や有料プランのカレンダーAPI等、別ソースの追加を要検討。
+    """
     symbols = [r.symbol for r in db.query(Instrument).filter_by(asset_class=asset_class).all()]
     if not symbols:
         return []

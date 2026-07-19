@@ -11,10 +11,14 @@ import PublicIcon from '@mui/icons-material/Public'
 import MoodIcon from '@mui/icons-material/Mood'
 import EventIcon from '@mui/icons-material/Event'
 import BarChartIcon from '@mui/icons-material/BarChart'
+import ListAltIcon from '@mui/icons-material/ListAlt'
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload'
+import WhatshotIcon from '@mui/icons-material/Whatshot'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import {
   adminRefresh, adminTrain, adminPredict, fetchHealth, fetchAdminStatus,
   adminRefreshMacro, adminRefreshSentiment, adminRefreshEvents, adminRefreshSupplyDemand,
+  adminRefreshUniverse, adminRefreshEquityBroad, adminRunScreening,
 } from '../api/client'
 
 const TARGET_LABELS = {
@@ -46,6 +50,10 @@ export default function AdminPage() {
   const [sentimentResult,    setSentimentResult]    = useState(null)
   const [eventsResult,       setEventsResult]       = useState(null)
   const [supplyDemandResult, setSupplyDemandResult] = useState(null)
+
+  const [universeResult,     setUniverseResult]     = useState(null)
+  const [equityBroadResult,  setEquityBroadResult]  = useState(null)
+  const [screeningResult,    setScreeningResult]    = useState(null)
 
   const { data: health } = useQuery({
     queryKey: ['health'],
@@ -102,9 +110,28 @@ export default function AdminPage() {
     onError: (e) => setSupplyDemandResult({ status: 'error', message: e.message }),
   })
 
+  const universeMutation = useMutation({
+    mutationFn: () => adminRefreshUniverse(),
+    onSuccess: (data) => setUniverseResult(data),
+    onError: (e) => setUniverseResult({ status: 'error', message: e.message }),
+  })
+
+  const equityBroadMutation = useMutation({
+    mutationFn: () => adminRefreshEquityBroad(),
+    onSuccess: (data) => setEquityBroadResult(data),
+    onError: (e) => setEquityBroadResult({ status: 'error', message: e.message }),
+  })
+
+  const screeningMutation = useMutation({
+    mutationFn: () => adminRunScreening(),
+    onSuccess: (data) => setScreeningResult(data),
+    onError: (e) => setScreeningResult({ status: 'error', message: e.message }),
+  })
+
   const anyLoading = [
     refreshMutation, trainMutation, predictMutation,
     macroMutation, sentimentMutation, eventsMutation, supplyDemandMutation,
+    universeMutation, equityBroadMutation, screeningMutation,
   ].some((m) => m.isPending)
 
   return (
@@ -357,6 +384,81 @@ export default function AdminPage() {
                 {supplyDemandMutation.isPending ? '更新中...' : '需給データ更新'}
               </Button>
               <ResultAlert result={supplyDemandResult} />
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+
+      {/* 急騰候補スクリーニング (広いユニバース、コア予測パイプラインとは独立) */}
+      <Typography variant="subtitle1" fontWeight={700} sx={{ mt: 4, mb: 1 }}>
+        急騰候補スクリーニング（広いユニバース）
+      </Typography>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+        東証全上場銘柄を対象に、時価総額ではなく流動性(売買代金)のみで足切りしたうえで
+        ルールベースのスコアでランキングします。上のコア30銘柄の学習/予測とは完全に独立しています。
+        <strong>①銘柄マスタ更新 → ②広域株価取得 → ③スクリーニング実行</strong> の順に実行してください。
+        ②はJ-Quantsのレート制限(約5req/分)のため、期間によっては数十分〜数時間かかります。
+      </Typography>
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={6} md={4}>
+          <Card sx={{ height: '100%' }}>
+            <CardContent>
+              <Typography variant="subtitle2" fontWeight={700} gutterBottom>① 銘柄マスタ更新</Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                J-Quantsから東証上場銘柄一覧(市場区分・業種)を取得します。数秒で完了します。
+              </Typography>
+              <Button
+                variant="outlined"
+                startIcon={universeMutation.isPending ? <CircularProgress size={16} /> : <ListAltIcon />}
+                onClick={() => { setUniverseResult(null); universeMutation.mutate() }}
+                disabled={anyLoading}
+                fullWidth
+              >
+                {universeMutation.isPending ? '更新中...' : '銘柄マスタ更新'}
+              </Button>
+              <ResultAlert result={universeResult} />
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} sm={6} md={4}>
+          <Card sx={{ height: '100%' }}>
+            <CardContent>
+              <Typography variant="subtitle2" fontWeight={700} gutterBottom>② 広域株価取得</Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                J-Quantsで全銘柄の株価を日付範囲一括取得します。レート制限のため時間がかかります。
+              </Typography>
+              <Button
+                variant="outlined"
+                startIcon={equityBroadMutation.isPending ? <CircularProgress size={16} /> : <CloudDownloadIcon />}
+                onClick={() => { setEquityBroadResult(null); equityBroadMutation.mutate() }}
+                disabled={anyLoading}
+                fullWidth
+              >
+                {equityBroadMutation.isPending ? '取得中... (時間がかかります)' : '広域株価取得'}
+              </Button>
+              <ResultAlert result={equityBroadResult} />
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} sm={6} md={4}>
+          <Card sx={{ height: '100%' }}>
+            <CardContent>
+              <Typography variant="subtitle2" fontWeight={700} gutterBottom>③ スクリーニング実行</Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                流動性フィルタ + 急騰スコアを計算し、ランキングを保存します。
+              </Typography>
+              <Button
+                variant="outlined"
+                startIcon={screeningMutation.isPending ? <CircularProgress size={16} /> : <WhatshotIcon />}
+                onClick={() => { setScreeningResult(null); screeningMutation.mutate() }}
+                disabled={anyLoading}
+                fullWidth
+              >
+                {screeningMutation.isPending ? '計算中...' : 'スクリーニング実行'}
+              </Button>
+              <ResultAlert result={screeningResult} />
             </CardContent>
           </Card>
         </Grid>

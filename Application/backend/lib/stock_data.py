@@ -10,6 +10,9 @@ import yfinance as yf
 
 warnings.filterwarnings("ignore")
 
+# NIKKEI_MAJOR は「コア層」専用の厳選銘柄リスト (LightGBM学習/予測パイプライン向け)。
+# 広いユニバース(急騰候補スクリーニング)は lib/jquants_data.py の fetch_listed_instruments()
+# で東証全上場銘柄を動的取得する (services/universe_service.py 参照)。
 NIKKEI_MAJOR = [
     "7203.T", "6758.T", "8306.T", "9432.T", "9984.T",
     "6861.T", "8316.T", "4063.T", "6367.T", "7974.T",
